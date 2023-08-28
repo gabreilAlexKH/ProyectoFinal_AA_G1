@@ -1,4 +1,5 @@
 
+from curvas import *
 from collections import deque
 
 
