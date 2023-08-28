@@ -1,0 +1,110 @@
+
+//Conjunto de curvas normalisadas 
+class Cluster {
+
+    Set<Curva> curvas = {∅} 
+    float totalX
+    float totalY
+    float totalT
+    Curva curvaModelo
+    
+    constructor(Curva curvaBase) {
+        curvas = curvas ∪ curvaBase
+        totalX = curvaBase.B.x
+        totalY = curvaBase.B.y
+        totalT = curvaBase.t
+        curvaModelo = curvaBase  
+    }
+
+    function combine(cluster cluster2){
+        curvas = curvas ∪ cluster2.curvas
+        totalX += cluster2.totalX
+        totalY += cluster2.totalY
+        totalT += cluster2.totalT
+        curvaModelo.B.x = totalX/curvas.length
+        curvaModelo.B.y = totalY/curvas.length
+        curvaModelo.t = totalT/curvas.length
+    }
+
+    function toList(){
+        LinkedList<(int,float)> cluster;
+        foreach (curva in curvas) {
+            cluster.add((curva.id , curvaModelo.compare(curva))) 
+        }
+        return cluster;
+    }
+}
+
+
+function merge(Array<Cluster> clusters1 , Array<Cluster> clusters2 , float corte) {
+    
+    Array<Cluster>  newClusters;
+
+    for (i = 0 , i < clusters1.length ) {
+        int maxIndex = -1
+        float maxSimilitud = 0
+        Curva modelo1 = clusters1[i].curvaModelo
+        
+        for (j = 0 , j < clusters2.length ) {
+
+            Curva modelo2 = clusters2[j].curvaModelo 
+            float similitud = modelo1.compare(modelo2)
+            if(similitud > maxSimilitud){
+                maxIndex = j;
+                maxSimilitud = similitud
+            }    
+        }
+
+        if(maxIndex > -1 && maxSimilitud >= corte){
+            clusters2[maxIndex].combine(clusters1[i])
+
+        }else{
+            newClusters.add(clusters1[i])
+        }
+    }
+    newClusters.addAll(clusters2);
+    return newClusters;
+}
+
+function clustering( Array<Cluster> clusters  , float corte ){
+
+    if(clusters.length > 1){
+
+        q = ⌊(clusters.length)/2⌋
+        Array<Cluster> clusters1 = clustering( clusters[0, q] , corte)
+        Array<Cluster> clusters2 = clustering( clusters[q+1, clusters.length-1] , corte)
+        Array<Cluster> newCluster = merge(clusters1,clusters2 , corte)
+        return newCluster
+    }
+    return clusters
+}
+
+fuction solucion(Array<Curva> curvas){
+
+    //Normalisar y convertir a clusters de un solo elemento
+    Array<Cluster> clustersUnit;
+    int i = 0
+
+    foreach (curva in curvas) {
+        curva.normalize();
+        curva.id = i
+        clusters.add(Cluste(curva) )
+        i++;
+    }
+    //Unir la lista inicial de clusters de un elemento a clusters de varios elementos
+    Array<Cluster> clusters = clustering(clustersUnit , 0,5)
+    //Filtrar y clasificar resultados
+    LinkedList<LinkedList<(int,float)>> similares;
+    LinkedList<int> diferentes;
+
+    foreach (cluster in clusters) {
+        if (cluster.curvas.length > 1) {
+            LinkedList<(int,float)> clusterList = cluster.toList()
+            similares.add(clusterList)    
+        } else {
+            Curva curvaDif = cluster.curvas.get(0)
+            diferentes.add(curvaDif.id)
+        }   
+    }
+    return (similares , diferentes)
+}

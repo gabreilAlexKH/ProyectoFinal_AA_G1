@@ -46,6 +46,11 @@ class Curva:
         self.C = Point(AC * factor , 0)
         self.B = Point( x * factor , BD * factor)
     
-    def compare(curva):
+    def compare(self, curva):
         return 0.6
+    
+    def __str__(self):
+
+        return str(self.id) + "," + str(self.A) +"," + str(self.B) +"," + str(self.C)  + "," + str(self.t)
+
 

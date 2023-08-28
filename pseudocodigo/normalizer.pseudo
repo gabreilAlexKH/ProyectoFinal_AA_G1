@@ -1,0 +1,48 @@
+class Punto{
+    float x
+    float y
+    constructor( X , Y) {
+        x=X
+        y=Y
+    }
+}
+
+class Curva {
+    Punto A , B , C 
+    float t
+    int id 
+
+    constructor(id , A , B , C , t ) {
+        this.id=id
+        this.A=A
+        this.B=B
+        this.C=C
+        this.t=t
+    }
+
+    function normalize() {
+        //Devuleve la proyecion ortogonal (Punto) de B sobre la recta fromada por A y C
+        Punto D = proyecion(recta(A , C) , B) 
+
+        float AD = distacia(A, D) //Distancia entre dos Puntos
+        float BD = distacia(B, D)
+        float CD = distacia(C, D)
+        float AC = distacia(A, C)
+        float x = 0
+        
+        //Mover el triangulO a tener su base en eje x y reproporcionar el triangulo a un distancia AB = 1
+        float factor = 1/AC
+        if (AD > CD) {
+            x = AD
+        } else {
+            x =  AC - CD
+        }
+        A = Punto(0,0)
+        C = Punto(AC * factor , 0)
+        B = Punto( x * factor , BD * factor)   
+    }
+
+    function compare(curva){
+        return similitud(self, curva)
+    }
+}

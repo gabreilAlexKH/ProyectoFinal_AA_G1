@@ -1,30 +1,31 @@
 
 from curvas import *
 from collections import deque
+import math
 
 
 class Cluster:
 
-    curvas={}
+    curvas=set()
 
     totalX = float(0)
     totalY= float(0)
     totalT= float(0)
     curvaModelo = None
 
-    def __init__(curvaBase):
+    def __init__(self,curvaBase):
 
-        self.curvas = {curvaBase}
+        self.curvas = set([curvaBase])
         self.totalX = curvaBase.B.x
         self.totalY = curvaBase.B.y
         self.totalT = curvaBase.t
         self.curvaModelo = curvaBase 
 
     def combine(self , cluster2):
-        self.curvas = curvas.union(cluster2.curva)
+        self.curvas = self.curvas.union(cluster2.curvas)
         self.totalX += cluster2.totalX
-        self.totalY += cluster.totalY
-        self.totalT += cluster.totalT
+        self.totalY += cluster2.totalY
+        self.totalT += cluster2.totalT
 
         n = len(self.curvas)
         self.curvaModelo.B = Point(self.totalX/n , self.totalY/n)
@@ -38,7 +39,7 @@ class Cluster:
 
 def merge(clusters1 , clusters2 , corte):
 
-    newClusters = array.array()
+    newClusters = []
 
     for i in range(len(clusters1)):
         maxIndex = int(-1)
@@ -50,7 +51,7 @@ def merge(clusters1 , clusters2 , corte):
             modelo2 = clusters1[i].curvaModelo
             similitud = modelo1.compare(modelo2)
 
-            if similitud > maxCoincidense:
+            if similitud > maxSimilitud:
                 maxIndex = j
                 maxSimilitud = similitud
         
@@ -64,14 +65,13 @@ def merge(clusters1 , clusters2 , corte):
     return newClusters
 
 
-
 def clustering(  clusters  , corte ):
 
     if len(clusters) >1:
 
-        q = math.floor((clusters.length)/2)
-        clusters1 = clustering( clusters[0, q] , corte)
-        clusters2 = clustering( clusters[q+1, len(clusters)-1] , corte)
+        q = math.floor(len(clusters)/2)
+        clusters1 = clustering( clusters[0 : q] , corte)
+        clusters2 = clustering( clusters[q: len(clusters)] , corte)
         newCluster = merge(clusters1,clusters2 , corte)
         return newCluster
     
@@ -80,18 +80,18 @@ def clustering(  clusters  , corte ):
 
 def solucion (curvas):
 
-    clustersUnit = array.array()
-    i = int(i)
+    clustersUnit = []
+    i = int(0)
 
     for curva in curvas:
         curva.normalize()
         curva.id = i
-        clustersUnit.append(curva)
+        clustersUnit.append(Cluster(curva))
         i+=1
     
     clusters = clustering(clustersUnit , 0.5)
-    similares = array.array()
-    diferentes = array.array()
+    similares = []
+    diferentes = []
 
     for cluster in clusters:
 
@@ -100,7 +100,7 @@ def solucion (curvas):
             similares.append(clusterList)
         
         else:
-            curvaDif = cluster.curvas.popleft()
+            curvaDif = cluster.curvas.pop()
             diferentes.append(curvaDif.id)
     
     return (similares , diferentes)
