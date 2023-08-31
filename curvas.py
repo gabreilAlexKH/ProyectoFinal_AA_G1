@@ -54,7 +54,7 @@ class Curva:
         self.B = Point( x * factor , BD * factor)
     
     def compare(self, curva):
-        return similitud(self, curva)
+        return similitud(self.copy(), curva.copy())
     
 
     def copy(self):
@@ -96,10 +96,3 @@ def calculate_curvature(curva):
     curvature = np.abs(x_prime * y_double_prime - y_prime * x_double_prime) / (x_prime**2 + y_prime**2)**(3/2)
     
     return max(curvature)
-
-curva1 = Curva(1, Point(-2,3), Point(1,4), Point(-2,12), .4)
-curva2 = Curva(2, Point(0,13), Point(11,2), Point(0,15), .6)
-curva1.normalize()
-curva2.normalize()
-
-print(similitud(curva1, curva2))

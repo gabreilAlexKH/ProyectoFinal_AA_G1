@@ -34,7 +34,7 @@ def writeOutputs(outName, similares , diferentes):
     else:
         i = 0
         for cluster in similares:
-            file.write(str(i) + ": " + str(cluster)[6: -1])
+            file.write(str(i) + ": " + str(cluster)[6: -1] + "\n")
             i+=1
 
     file.write("\nDiferentes: \n")

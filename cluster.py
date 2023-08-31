@@ -19,10 +19,11 @@ class Cluster:
         self.totalX = curvaBase.B.x
         self.totalY = curvaBase.B.y
         self.totalT = curvaBase.t
-        self.curvaModelo = curvaBase 
+        self.curvaModelo = curvaBase.copy()
 
     def combine(self , cluster2):
-        self.curvas = self.curvas.union(cluster2.curvas)
+
+        self.curvas.update(cluster2.curvas)
         self.totalX += cluster2.totalX
         self.totalY += cluster2.totalY
         self.totalT += cluster2.totalT
@@ -31,10 +32,11 @@ class Cluster:
         self.curvaModelo.B = Point(self.totalX/n , self.totalY/n)
         self.curvaModelo.t = self.totalT/n
 
+
     def toList(self):
         cluster=deque()
         for curva in self.curvas:
-            cluster.append((curva.id , self.curvaModelo.compare(curva)))
+            cluster.append((curva.id , float(self.curvaModelo.compare(curva))))
         return cluster
 
 def merge(clusters1 , clusters2 , corte):
@@ -48,7 +50,7 @@ def merge(clusters1 , clusters2 , corte):
 
         for j in range(len(clusters2)):
 
-            modelo2 = clusters1[i].curvaModelo
+            modelo2 = clusters2[j].curvaModelo
             similitud = modelo1.compare(modelo2)
 
             if similitud > maxSimilitud:
@@ -65,7 +67,7 @@ def merge(clusters1 , clusters2 , corte):
     return newClusters
 
 
-def clustering(  clusters  , corte ):
+def clustering( clusters  , corte ):
 
     if len(clusters) >1:
 
@@ -81,13 +83,10 @@ def clustering(  clusters  , corte ):
 def solucion (curvas):
 
     clustersUnit = []
-    i = int(0)
 
     for curva in curvas:
         curva.normalize()
-        curva.id = i
         clustersUnit.append(Cluster(curva))
-        i+=1
     
     clusters = clustering(clustersUnit , 0.5)
     similares = []
