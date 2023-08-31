@@ -1,5 +1,5 @@
 from cluster import *
-
+from timeit import default_timer as timer
 
 
 def readInput(inputName):
@@ -47,8 +47,14 @@ def main():
     print("Abirendo: " + fileName)
     curvas = readInput(fileName)
 
+
     print("Prosesando curvas: " + fileName)
+
+    start = timer()
     respuesta = solucion(curvas)
+    end = timer()
+    print("Tiempo de ejecución: "  + str(end - start) + "s")
+
     similares = respuesta[0]
     diferentes = respuesta[1]
 
@@ -66,5 +72,6 @@ def main():
 
     print("Escribiendo resultados en ./outputFiles/out.txt")
     writeOutputs("./outputFiles/out.txt", similares , diferentes)
+
 
 main()
